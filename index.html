@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>BuildVibes</title>
+<style>
+  :root {
+    --page: #F8F4EE;
+    --card: #FFFFFF;
+    --ink: #141B33;
+    --muted: #6B6578;
+    --line: #E5DFD6;
+    --action: #C24417;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--page); color: var(--ink); }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic", Tahoma, sans-serif;
+    font-size: 15px; line-height: 1.5;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 24px 16px;
+  }
+  html[lang="ar"] body { font-size: 16px; }
+  main {
+    width: 100%; max-width: 380px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 20px; padding: 28px 20px 20px;
+    text-align: center;
+  }
+  .mark {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 800; letter-spacing: .04em; font-size: 13px;
+  }
+  .mark i { width: 8px; height: 8px; border-radius: 50%; background: var(--action); display: inline-block; }
+  h1 { font-size: 20px; line-height: 1.35; margin: 20px 0 24px; font-weight: 700; }
+  html[lang="ar"] h1 { font-size: 22px; }
+  a.button {
+    display: block; text-decoration: none; border-radius: 999px;
+    padding: 14px 16px; font-weight: 700; margin-top: 10px;
+  }
+  a.primary { background: var(--action); color: #FFFFFF; }
+  a.secondary { border: 1px solid var(--line); color: var(--ink); background: var(--card); }
+  .brand { direction: ltr; unicode-bidi: isolate; }
+</style>
+</head>
+<body>
+<main>
+  <div class="mark"><i></i><span class="brand">BUILDVIBES</span></div>
+  <h1 id="title"></h1>
+  <a class="button primary" id="open" href="#"></a>
+  <a class="button secondary" id="store" href="#"></a>
+</main>
+<script>
+  // Review 127, "Link domain for the pilot". Nothing is fetched: the page
+  // reads only its own address, to open the same profile or company in the
+  // app, or send the person to the store.
+  (function () {
+    var pkg = 'com.buildvibes.buildvibes';
+    var store = 'https://play.google.com/store/apps/details?id=' + pkg;
+    var path = location.pathname;
+    var m = /^\/(p|c)\/([0-9a-fA-F-]{36})\/?$/.exec(path);
+    var kind = m ? m[1] : null;
+    var ar = (navigator.language || '').toLowerCase().indexOf('ar') === 0;
+    var words = ar ? {
+      p: 'هذا الملف على <span class="brand">BuildVibes</span>',
+      c: 'صفحة هذه الشركة على <span class="brand">BuildVibes</span>',
+      none: '<span class="brand">BuildVibes</span>',
+      open: 'افتح في <span class="brand">BuildVibes</span>',
+      store: 'حمّل <span class="brand">BuildVibes</span> من <span class="brand">Google Play</span>'
+    } : {
+      p: 'This profile is on BuildVibes',
+      c: 'This company page is on BuildVibes',
+      none: 'BuildVibes',
+      open: 'Open in BuildVibes',
+      store: 'Get BuildVibes on Google Play'
+    };
+    if (ar) { document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; }
+    document.getElementById('title').innerHTML = words[kind || 'none'];
+    var open = document.getElementById('open');
+    var get = document.getElementById('store');
+    get.innerHTML = words.store;
+    get.href = store;
+    if (!kind) { open.style.display = 'none'; return; }
+    open.innerHTML = words.open;
+    var android = /android/i.test(navigator.userAgent);
+    open.href = android
+      ? 'intent://' + location.host + path + '#Intent;scheme=https;package=' + pkg +
+        ';S.browser_fallback_url=' + encodeURIComponent(store) + ';end'
+      : store;
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.buildvibes.buildvibes",
+      "sha256_cert_fingerprints": [
+        "9D:02:B7:DB:2A:4A:D1:6D:C5:A3:3A:B7:E7:57:64:1F:15:C7:99:C4:49:EE:C9:A7:48:5E:8B:02:85:B1:DF:9F"
+      ]
+    }
+  }
+]
