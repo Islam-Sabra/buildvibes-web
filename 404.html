@@ -40,8 +40,8 @@
     padding: 14px 16px; font-weight: 700; margin-top: 10px;
   }
   a.primary { background: var(--action); color: #FFFFFF; }
-  a.secondary { border: 1px solid var(--line); color: var(--ink); background: var(--card); }
   .brand { direction: ltr; unicode-bidi: isolate; }
+  .ask { color: var(--muted); margin: 16px 0 0; }
 </style>
 </head>
 <body>
@@ -49,15 +49,18 @@
   <div class="mark"><i></i><span class="brand">BUILDVIBES</span></div>
   <h1 id="title"></h1>
   <a class="button primary" id="open" href="#"></a>
-  <a class="button secondary" id="store" href="#"></a>
+  <p class="ask" id="ask"></p>
 </main>
 <script>
   // Review 127, "Link domain for the pilot". Nothing is fetched: the page
   // reads only its own address, to open the same profile or company in the
-  // app, or send the person to the store.
+  // app.
   (function () {
+    // Until the app is on Google Play there is no store link (lead, 9 Nov):
+    // the page asks for the app from the site lead. The day it goes onto
+    // Play, the store link comes back together with the Play app signing
+    // SHA-256 in assetlinks.json.
     var pkg = 'com.buildvibes.buildvibes';
-    var store = 'https://play.google.com/store/apps/details?id=' + pkg;
     var path = location.pathname;
     var m = /^\/(p|c)\/([0-9a-fA-F-]{36})\/?$/.exec(path);
     var kind = m ? m[1] : null;
@@ -67,27 +70,23 @@
       c: 'صفحة هذه الشركة على <span class="brand">BuildVibes</span>',
       none: '<span class="brand">BuildVibes</span>',
       open: 'افتح في <span class="brand">BuildVibes</span>',
-      store: 'حمّل <span class="brand">BuildVibes</span> من <span class="brand">Google Play</span>'
+      ask: 'اطلب تطبيق <span class="brand">BuildVibes</span> من مسؤول الموقع'
     } : {
       p: 'This profile is on BuildVibes',
       c: 'This company page is on BuildVibes',
       none: 'BuildVibes',
       open: 'Open in BuildVibes',
-      store: 'Get BuildVibes on Google Play'
+      ask: 'Ask your site lead for the BuildVibes app'
     };
     if (ar) { document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl'; }
     document.getElementById('title').innerHTML = words[kind || 'none'];
+    document.getElementById('ask').innerHTML = words.ask;
     var open = document.getElementById('open');
-    var get = document.getElementById('store');
-    get.innerHTML = words.store;
-    get.href = store;
-    if (!kind) { open.style.display = 'none'; return; }
-    open.innerHTML = words.open;
     var android = /android/i.test(navigator.userAgent);
-    open.href = android
-      ? 'intent://' + location.host + path + '#Intent;scheme=https;package=' + pkg +
-        ';S.browser_fallback_url=' + encodeURIComponent(store) + ';end'
-      : store;
+    if (!kind || !android) { open.style.display = 'none'; return; }
+    // Opens the app when it is installed; without it the page stays.
+    open.innerHTML = words.open;
+    open.href = 'intent://' + location.host + path + '#Intent;scheme=https;package=' + pkg + ';end';
   })();
 </script>
 </body>
